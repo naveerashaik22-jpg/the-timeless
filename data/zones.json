@@ -1,0 +1,62 @@
+[
+  {
+    "id": "zone-timeless",
+    "name": "The Timeless",
+    "tagline": "Grand Vintage Café & Clockwork Lounge",
+    "description": "The beating heart of the café featuring restored brass pendulum clocks, warm espresso aromas, and handcrafted mahogany seating for conversations and pauses.",
+    "ideal_moods": ["happy", "celebratory", "social", "curious"],
+    "ambiance": "Warm amber lighting, soft acoustic piano, gentle café hum",
+    "features": ["Handcrafted espresso bar", "Community vintage tables", "Bespoke pastry display"],
+    "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "zone-ink-ember",
+    "name": "Ink & Ember",
+    "tagline": "Reading & Writing Sanctuary",
+    "description": "A secluded library alcove wrapped in floor-to-ceiling vintage oak bookshelves, antique brass reading lamps, and deep leather armchairs.",
+    "ideal_moods": ["calm", "focused", "nostalgic", "tired"],
+    "ambiance": "Quiet fireplace glow, turn-of-the-page silence, soft rain acoustics",
+    "features": ["Curated literature library", "Vintage typewriter stations", "Personal book stands"],
+    "image": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "zone-tranquil-nook",
+    "name": "The Tranquil Nook",
+    "tagline": "Botanical Mindful Retreat",
+    "description": "A sun-drenched sanctuary bordered by hanging ferns, bonsai ficus, and linen curtain dividers for deep meditation, journaling, and restful pauses.",
+    "ideal_moods": ["calm", "low-energy", "tired", "focused"],
+    "ambiance": "Gentle water fountain trickle, botanical fragrances, natural skylight",
+    "features": ["Floor cushion seating", "Noise-filtering acoustic drapery", "Herbal infusion bar"],
+    "image": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "zone-retro",
+    "name": "Retro",
+    "tagline": "Vinyl Lounge & 70s Nostalgia",
+    "description": "Step into a golden-era salon with analog turntable listening stations, vintage vinyl records, warm corduroy booths, and classic café favorites.",
+    "ideal_moods": ["nostalgic", "social", "happy", "curious"],
+    "ambiance": "Warm vinyl crackle, classic jazz & soul, warm mustard & walnut tones",
+    "features": ["Headphone listening stations", "Vinyl crate browsing", "Retro arcade booth"],
+    "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "zone-tiny-tales",
+    "name": "Tiny Tales",
+    "tagline": "Intimate Stories & Connection Corner",
+    "description": "Cozy semi-private round tables designed for close friends, romantic dates, and heartfelt catch-ups with shared platters and specialty drinks.",
+    "ideal_moods": ["social", "happy", "celebratory"],
+    "ambiance": "Intimate table lamps, soft laughter, shared fondue & dessert carts",
+    "features": ["Prompt conversation cards", "Polaroid memory guestbook", "Tasting flights"],
+    "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "zone-echo-booth",
+    "name": "Echo Booth",
+    "tagline": "Solo Contemplation & Deep Focus Pods",
+    "description": "Ergonomically crafted individual wooden booths with high sound-dampening walls, dedicated task lighting, and integrated charging.",
+    "ideal_moods": ["focused", "energetic", "calm"],
+    "ambiance": "Targeted concentration white noise, zero distraction, focused glow",
+    "features": ["Noise-canceling headsets", "High-speed wired power", "Call-free solo zone"],
+    "image": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"
+  }
+]

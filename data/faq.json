@@ -1,0 +1,50 @@
+[
+  {
+    "id": "faq-01",
+    "question": "What are your opening hours?",
+    "keywords": ["hours", "timings", "opening", "open", "close", "timing", "time", "closing"],
+    "answer": "The Timeless welcomes you daily from 8:00 AM to 11:30 PM. Breakfast & bakery service begins at 8:00 AM, while our full culinary kitchen runs from 11:00 AM until 11:00 PM."
+  },
+  {
+    "id": "faq-02",
+    "question": "Do you have vegetarian and vegan options?",
+    "keywords": ["vegetarian", "veg", "vegan", "plant-based", "dairy-free", "gluten-free", "dietary"],
+    "answer": "Yes! Our entire culinary concept is 100% vegetarian-friendly, with extensive vegan, gluten-free, and nut-free choices clearly tagged. We also offer oat, almond, and soy milk substitutes for all coffees and teas."
+  },
+  {
+    "id": "faq-03",
+    "question": "What payment methods are accepted?",
+    "keywords": ["payment", "pay", "card", "upi", "cash", "gpay", "phonepe", "apple pay", "bill"],
+    "answer": "We accept all major UPI apps (Google Pay, PhonePe, Paytm), Credit/Debit cards (Visa, Mastercard, RuPay, Amex), contactless tap-to-pay, and cash."
+  },
+  {
+    "id": "faq-04",
+    "question": "Can I reserve a table or experiential zone?",
+    "keywords": ["reserve", "reservation", "book", "booking", "table", "seats"],
+    "answer": "Walk-ins are always warmly embraced! For special gatherings or to reserve dedicated pods in 'Ink & Ember' or 'The Tranquil Nook', you can reserve via our companion app or ask our café host upon arrival."
+  },
+  {
+    "id": "faq-05",
+    "question": "Do you have high-speed Wi-Fi and power outlets?",
+    "keywords": ["wifi", "wi-fi", "internet", "power", "plug", "charging", "work", "laptop"],
+    "answer": "Yes. We provide complimentary ultra-fast fiber Wi-Fi throughout THE TIMELESS, with concealed brass charging sockets and USB-C ports beneath every table in our 'Focused' and 'Ink & Ember' zones."
+  },
+  {
+    "id": "faq-06",
+    "question": "Where is the quiet seating area?",
+    "keywords": ["quiet", "read", "reading", "study", "silent", "peaceful", "corner", "zone", "tranquil"],
+    "answer": "Our dedicated quiet zones are 'Ink & Ember' (an intimate reading sanctuary lined with curated books) and 'The Tranquil Nook' (a sunlit botanical corner designed for quiet reflection and creative flow)."
+  },
+  {
+    "id": "faq-07",
+    "question": "What is today's special signature item?",
+    "keywords": ["special", "specials", "signature", "bestseller", "recommend", "today special"],
+    "answer": "Today's highlighted signature is 'The Timeless Clockwork Brew' (layered espresso, orange clove essence, bourbon cream, and 24k gold leaf) paired with our 'Warm Old-Fashioned Honey Cake'."
+  },
+  {
+    "id": "faq-08",
+    "question": "Can I customize my order or adjust sweetness and milk?",
+    "keywords": ["customize", "customization", "sweetness", "less sweet", "sugar free", "milk", "oat milk", "spice level"],
+    "answer": "Absolutely. You can customize sweetness (zero sugar, cane sugar, honey, date syrup), select dairy or plant milks (oat/almond), and adjust spice levels. Simply mention your preference to your AI companion or barista."
+  }
+]

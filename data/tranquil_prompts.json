@@ -1,0 +1,30 @@
+{
+  "ambient_soundscapes": [
+    { "id": "snd-01", "name": "Rain on Skylight Glass", "category": "Nature", "desc": "Gentle drops drumming against greenhouse glass with distant soft thunder" },
+    { "id": "snd-02", "name": "Vintage Hearth & Fireplace", "category": "Warmth", "desc": "Cracking oak logs and glowing amber embers in an antique brick hearth" },
+    { "id": "snd-03", "name": "Botanical Water Fountain", "category": "Zen", "desc": "Trickling moss-covered stone stream with gentle breeze through bamboo leaves" },
+    { "id": "snd-04", "name": "Old Library Page Whispers", "category": "Focus", "desc": "Soft ticking grandfather clock, turning aged parchment pages, and distant footsteps" }
+  ],
+  "reflection_prompts": [
+    {
+      "id": "prm-01",
+      "category": "Gratitude",
+      "question": "What is one small, quiet moment from this past week that made you feel peaceful, even for just ten seconds?"
+    },
+    {
+      "id": "prm-02",
+      "category": "Letting Go",
+      "question": "What is a burden or expectation you have been carrying today that is not yours to hold alone?"
+    },
+    {
+      "id": "prm-03",
+      "category": "The Future Self",
+      "question": "If your 80-year-old self walked through the door of this café right now, what comforting advice would they give you?"
+    },
+    {
+      "id": "prm-04",
+      "category": "Rediscovery",
+      "question": "What simple joy did you love unconditionally as a child that you haven't given yourself time for lately?"
+    }
+  ]
+}

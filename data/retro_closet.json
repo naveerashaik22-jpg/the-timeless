@@ -1,0 +1,69 @@
+{
+  "eras": [
+    {
+      "id": "era-1920",
+      "name": "1920s — The Roaring Twenties",
+      "tagline": "Gatsby Glamour, Cloche Hats & Velvet Lapels",
+      "description": "Step into the golden age of jazz clubs, art deco aesthetics, feathered headbands, and tailored tweed overcoats.",
+      "palette": ["#1A1A1A", "#D4AF37", "#6B1D2F"],
+      "image": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
+      "outfits": [
+        { "name": "Gatsby Tweed Tailored 3-Piece", "type": "Formal", "details": "Herringbone wool, brass pocket watch chain, silk pocket square" },
+        { "name": "Midnight Velvet Flapper Gown", "type": "Evening", "details": "Hand-beaded fringing, pearl necklace, feather headband" },
+        { "name": "Newsboy Wool Coat & Cap", "type": "Street", "details": "Heavy grey wool, leather suspenders, oxford lace-up boots" }
+      ],
+      "props": ["Brass Pocket Watch", "Antique Kodak Brownie Camera", "Fountain Pen with Black Ink", "Vintage Cigarette Case"]
+    },
+    {
+      "id": "era-1950",
+      "name": "1950s — Mid-Century Classic",
+      "tagline": "Rockabilly Leather, Cat-Eye Glasses & Polka Dots",
+      "description": "The era of vinyl jukeboxes, tailored A-line skirts, cuffed denim, bowling shirts, and classic leather bomber jackets.",
+      "palette": ["#C0392B", "#2980B9", "#F39C12"],
+      "image": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+      "outfits": [
+        { "name": "Rebel Leather Biker Jacket", "type": "Iconic", "details": "Heavy distressed leather, white t-shirt, selvedge cuffed denim" },
+        { "name": "Vintage Cherry Red Swing Dress", "type": "Classic", "details": "Petticoat skirt, polka-dot belt, red lipstick accent" },
+        { "name": "Corduroy Ivy League Blazer", "type": "Campus", "details": "Tan corduroy with elbow patches, Oxford knit tie" }
+      ],
+      "props": ["Chrome Diner Milkshake Glass", "Polaroid Land Camera Model 95", "Vintage 45 RPM Vinyl Record", "Cat-Eye Horned Spectacles"]
+    },
+    {
+      "id": "era-1970",
+      "name": "1970s — Bohemian & Vinyl Soul",
+      "tagline": "Bell Bottoms, Suede Fringes & Warm Analog Tones",
+      "description": "Warm earth tones, analog reel-to-reel tapes, corduroy jackets, round sunglasses, and effortless bohemian warmth.",
+      "palette": ["#D35400", "#7D6608", "#1E8449"],
+      "image": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80",
+      "outfits": [
+        { "name": "Mustard Corduroy Trench & Flares", "type": "Bohemian", "details": "Wide-wale mustard corduroy, high-waist flared denim" },
+        { "name": "Suede Fringe Woodstock Jacket", "type": "Festival", "details": "Tan cowhide suede with hand-cut fringe, paisley scarf" },
+        { "name": "Vintage Disco Silk Collar Shirt", "type": "Nightlife", "details": "Wide wing collar, satin finish, amber aviators" }
+      ],
+      "props": ["Original Turntable Headphones", "Super 8 Film Camera", "Acoustic Sunburst Guitar", "Amber Round Sunglasses"]
+    },
+    {
+      "id": "era-1990",
+      "name": "1990s — Nostalgic Polaroid & Grunge",
+      "tagline": "Oversized Flannels, Vintage Denim & Cassette Walkmans",
+      "description": "Raw, nostalgic, and minimalist: baggy flannel overcoats, cassette tapes, chunky combat boots, and 90s film grain.",
+      "palette": ["#2C3E50", "#7F8C8D", "#8E44AD"],
+      "image": "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=800&q=80",
+      "outfits": [
+        { "name": "Oversized Plaid Lumberjack Flannel", "type": "Grunge", "details": "Heavy wool plaid, washed black denim, Dr. Martens boots" },
+        { "name": "Classic Vintage Levi's Denim Overalls", "type": "Casual", "details": "Light-wash denim, vintage band tee, canvas sneakers" },
+        { "name": "Dark Minimalist Wool Turtleneck", "type": "Coffeehouse", "details": "Black ribbed knit, oval wire spectacles, trench coat" }
+      ],
+      "props": ["Sony Walkman with Foam Headphones", "Polaroid 600 Instant Camera", "Cassette Mixtape labeled '1994'", "Beanie Hat"]
+    }
+  ],
+  "photo_booth_templates": [
+    { "id": "tpl-01", "name": "01 — 90s Passport", "desc": "Four symmetrical grainy square portraits with timestamp stamp" },
+    { "id": "tpl-02", "name": "02 — 90s Poster", "desc": "Full-bleed retro magazine cover with vintage typography and halftones" },
+    { "id": "tpl-03", "name": "03 — Vintage Film Strip", "desc": "Authentic vertical 35mm film perforations and frame numbers" },
+    { "id": "tpl-04", "name": "04 — Old Studio Portrait", "desc": "Sepia oval vignette frame with aged paper textures and gold foil" },
+    { "id": "tpl-05", "name": "05 — Retro Postcard", "desc": "Vintage airmail borders, postage stamp mark, and handwritten note" },
+    { "id": "tpl-06", "name": "06 — Newspaper Portrait", "desc": "The Timeless Chronicle front-page story with headline and print texture" },
+    { "id": "tpl-07", "name": "07 — Polaroid Memory", "desc": "Classic wide bottom white border with handwritten ballpoint cursive date" }
+  ]
+}

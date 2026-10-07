@@ -1,0 +1,26 @@
+[
+  {
+    "id": "evt-01",
+    "title": "The Canvas Hour",
+    "division": "TINY TALES & ART LOUNGE",
+    "tagline": "One Hour of Silent Creative Painting & Collective Storytelling",
+    "description": "Participants gather in quiet focus to paint on miniature wooden canvases with provided watercolor sets. At the end of the hour, our AI poet weaves a collective story inspired by everyone's brushstrokes.",
+    "schedule": "Every Saturday & Sunday • 4:00 PM – 5:30 PM",
+    "price": 350,
+    "included": ["Mini wooden easel", "Artisan cold-press canvas", "Winsor & Newton watercolor set", "Complimentary Jane Austen's Tea"],
+    "capacity": 12,
+    "image": "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "evt-02",
+    "title": "Little Architects & LEGO Legends",
+    "division": "TINY TALES",
+    "tagline": "Build Your Own Vintage City & Storybook Characters",
+    "description": "Kids and families build imaginative architectural structures using vintage-themed wooden blocks, LEGO, and paper automata crafts.",
+    "schedule": "Daily • 10:00 AM – 2:00 PM",
+    "price": 250,
+    "included": ["Access to Master LEGO Vault", "Wooden building kit", "Personalized Kid's Cookie with choice of superhero/character"],
+    "capacity": 15,
+    "image": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80"
+  }
+]

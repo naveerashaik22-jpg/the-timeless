@@ -1,0 +1,260 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FAF6EE;
+    color: #2A1810;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Custom Luxury Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4ECE0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A8823C;
+}
+
+/* Modern AVES Luxury Utilities */
+.vintage-paper-bg {
+  background-color: #FAF6EE;
+  background-image: 
+    radial-gradient(#C5A059 0.65px, transparent 0.65px),
+    radial-gradient(#D5BE9F 0.45px, #FAF6EE 0.45px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
+}
+
+.aves-dark-sanctuary {
+  background: radial-gradient(circle at 50% 0%, #251711 0%, #120A07 65%, #0A0503 100%);
+}
+
+.vintage-card-border {
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  box-shadow: 0 8px 30px -4px rgba(42, 24, 16, 0.08);
+}
+
+.vintage-glass {
+  background: rgba(250, 246, 238, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 160, 89, 0.28);
+}
+
+.vintage-dark-glass {
+  background: rgba(26, 15, 10, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 160, 89, 0.25);
+}
+
+.vintage-gold-gradient {
+  background: linear-gradient(135deg, #DFBE74 0%, #C5A059 50%, #9E7B36 100%);
+}
+
+.gold-text-gradient {
+  background: linear-gradient(135deg, #E5C77D 0%, #C5A059 60%, #9E7B36 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.vintage-ticket-edge {
+  background: radial-gradient(circle at 0% 50%, transparent 9px, #FAF6EE 10px),
+              radial-gradient(circle at 100% 50%, transparent 9px, #FAF6EE 10px);
+  background-repeat: repeat-y;
+}
+
+/* Atmospheric Glows & Animations */
+@keyframes goldPulse {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+
+@keyframes steamRise {
+  0% {
+    transform: translateY(0) scaleX(1) scaleY(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(-20px) scaleX(1.2) scaleY(1.3) translateX(4px);
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(-44px) scaleX(1.5) scaleY(1.6) translateX(-6px);
+    opacity: 0;
+  }
+}
+
+@keyframes steamWispLeft {
+  0% { transform: translateY(0) scale(1) translateX(0); opacity: 0; }
+  25% { opacity: 0.5; }
+  60% { transform: translateY(-28px) scale(1.35) translateX(-8px); opacity: 0.3; }
+  100% { transform: translateY(-56px) scale(1.8) translateX(-14px); opacity: 0; }
+}
+
+@keyframes steamWispRight {
+  0% { transform: translateY(0) scale(1) translateX(0); opacity: 0; }
+  30% { opacity: 0.6; }
+  65% { transform: translateY(-30px) scale(1.4) translateX(10px); opacity: 0.3; }
+  100% { transform: translateY(-60px) scale(1.9) translateX(16px); opacity: 0; }
+}
+
+@keyframes emberFloat {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-80px) translateX(20px) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes threadFlow {
+  0% {
+    stroke-dashoffset: 400;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes threadGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px rgba(223, 190, 116, 0.5)) drop-shadow(0 0 16px rgba(197, 160, 89, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(223, 190, 116, 0.9)) drop-shadow(0 0 28px rgba(197, 160, 89, 0.6));
+  }
+}
+
+.animate-gold-pulse {
+  animation: goldPulse 3.5s infinite ease-in-out;
+}
+
+.animate-float-slow {
+  animation: floatSlow 5s infinite ease-in-out;
+}
+
+.animate-steam {
+  animation: steamRise 3.5s infinite ease-out;
+}
+
+.animate-steam-wisp-1 {
+  animation: steamWispLeft 4s infinite ease-out;
+}
+
+.animate-steam-wisp-2 {
+  animation: steamRise 3.6s infinite ease-out 0.8s;
+}
+
+.animate-steam-wisp-3 {
+  animation: steamWispRight 4.2s infinite ease-out 1.5s;
+}
+
+.animate-ember-1 {
+  animation: emberFloat 6s infinite ease-out;
+}
+
+.animate-ember-2 {
+  animation: emberFloat 7.5s infinite ease-out 2s;
+}
+
+.animate-ember-3 {
+  animation: emberFloat 5.5s infinite ease-out 3.5s;
+}
+
+.aves-thread-glowing {
+  animation: threadGlow 2.5s infinite ease-in-out;
+}
+
+/* Authentic Leica 35mm Film Grain Texture Overlay */
+.film-grain {
+  position: relative;
+}
+
+.film-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  z-index: 2;
+  mix-blend-mode: overlay;
+}
+
+/* AVES Animated Thread Line */
+@keyframes threadPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(197, 160, 89, 0.4), 0 0 24px rgba(197, 160, 89, 0.2);
+    opacity: 0.85;
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(197, 160, 89, 0.8), 0 0 35px rgba(223, 190, 116, 0.4);
+    opacity: 1;
+  }
+}
+
+.aves-thread-line {
+  background: linear-gradient(180deg, #C5A059 0%, #DFBE74 50%, #C5A059 100%);
+  animation: threadPulse 3s infinite ease-in-out;
+}
+
+.aves-thread-node-active {
+  animation: threadPulse 2.2s infinite ease-in-out;
+}
+
+/* Wax seal badge */
+.wax-seal {
+  background: radial-gradient(circle at 35% 35%, #8A243D 0%, #521422 65%, #300A13 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.25), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Polaroid & Paper Deckle Styling */
+.polaroid-frame {
+  background: #FCFAF6;
+  box-shadow: 0 12px 35px -8px rgba(27, 17, 11, 0.25), 0 4px 12px -2px rgba(27, 17, 11, 0.12);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.polaroid-frame:hover {
+  transform: translateY(-4px) rotate(0.5deg);
+  box-shadow: 0 20px 45px -8px rgba(27, 17, 11, 0.35), 0 6px 16px -2px rgba(27, 17, 11, 0.18);
+}

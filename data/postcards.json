@@ -1,0 +1,38 @@
+[
+  {
+    "id": "post-01",
+    "theme": "Everyday Wonder",
+    "location": "Sent from The Tranquil Nook",
+    "date": "23 October, Late Afternoon",
+    "message": "I sat by the window watching the rain slide down the glass while drinking a hot vanilla latte. For the first time in months, I didn't check the time once. Be kind to yourself today — you are doing better than you think.",
+    "likes": 42,
+    "replies_count": 5
+  },
+  {
+    "id": "post-02",
+    "theme": "A Second Chance",
+    "location": "Sent from Ink & Ember",
+    "date": "14 November, Dusk",
+    "message": "I failed my first major interview today, but I bought myself a warm honey cake and a used book. The world didn't end. If you are having a difficult day, remember that chapter one is rarely where the hero triumphs.",
+    "likes": 89,
+    "replies_count": 12
+  },
+  {
+    "id": "post-03",
+    "theme": "Childhood Memories",
+    "location": "Sent from Retro Vinyl Lounge",
+    "date": "02 December, Nightfall",
+    "message": "They were playing an old 1974 vinyl record of jazz piano that my grandfather used to listen to on Sunday mornings. It smelled like roasted coffee and memory. Cherish the people who taught you how to listen.",
+    "likes": 64,
+    "replies_count": 8
+  },
+  {
+    "id": "post-04",
+    "theme": "Quiet Courage",
+    "location": "Sent from The Timeless Lounge",
+    "date": "18 January, Morning",
+    "message": "I finally booked the one-way ticket to follow the craft I love. Terrified, but the coffee here gave me just enough warmth to hit confirm. To whoever reads this: take the leap.",
+    "likes": 115,
+    "replies_count": 19
+  }
+]
