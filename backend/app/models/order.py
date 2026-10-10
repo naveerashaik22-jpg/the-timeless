@@ -12,6 +12,7 @@ class CartItem(BaseModel):
 
 class OrderCreateRequest(BaseModel):
     items: List[CartItem]
+    user_id: Optional[str] = None
     customer_name: Optional[str] = "Guest Traveler"
     table_or_zone: Optional[str] = "The Timeless Main Lounge"
     special_instructions: Optional[str] = None
@@ -19,6 +20,8 @@ class OrderCreateRequest(BaseModel):
 
 class OrderResponse(BaseModel):
     order_id: str
+    user_id: Optional[str] = None
+    customer_name: Optional[str] = "Guest Traveler"
     status: str
     created_at: str
     items: List[CartItem]

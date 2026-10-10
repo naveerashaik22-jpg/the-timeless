@@ -114,6 +114,8 @@ export interface CartItem {
 
 export interface OrderResponse {
   order_id: string;
+  user_id?: string;
+  customer_name?: string;
   status: string;
   created_at: string;
   items: CartItem[];
@@ -315,4 +317,5 @@ export interface UserProfile {
   discoveries: UserDiscovery[];
   memories: AvesMemoryInsight[];
   personalizationPaused?: boolean;
+  token?: string;
 }

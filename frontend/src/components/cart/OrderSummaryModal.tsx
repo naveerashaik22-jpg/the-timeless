@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, Clock, MapPin, Sparkles, AlertCircle } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 import { placeOrder } from '../../services/api';
 import confetti from 'canvas-confetti';
 
@@ -16,12 +17,19 @@ export const OrderSummaryModal: React.FC = () => {
     setActiveOrder,
     openSuccessModal,
   } = useCart();
+  const { currentUser, refreshOrders } = useAuth();
 
-  const [customerName, setCustomerName] = useState('Guest Traveler');
+  const [customerName, setCustomerName] = useState(currentUser?.name || 'Guest Traveler');
   const [selectedZone, setSelectedZone] = useState('The Timeless Main Clockwork Lounge');
   const [instructions, setInstructions] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (currentUser?.name) {
+      setCustomerName(currentUser.name);
+    }
+  }, [currentUser]);
 
   if (!isOrderModalOpen) return null;
 
@@ -36,17 +44,18 @@ export const OrderSummaryModal: React.FC = () => {
 
   const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (items.length === 0) return;
+    if (items.length === 0 || isSubmitting) return;
     setIsSubmitting(true);
     setError(null);
 
     try {
       const order = await placeOrder({
         items,
-        customer_name: customerName.trim() || 'Guest Traveler',
+        user_id: currentUser?.id,
+        customer_name: customerName.trim() || currentUser?.name || 'Guest Traveler',
         table_or_zone: selectedZone,
         special_instructions: instructions.trim() || undefined,
-      });
+      }, currentUser?.token);
 
       // Confetti burst for celebration!
       try {
@@ -62,6 +71,9 @@ export const OrderSummaryModal: React.FC = () => {
 
       setActiveOrder(order);
       clearCart();
+      if (currentUser?.id) {
+        refreshOrders();
+      }
       closeOrderModal();
       openSuccessModal();
     } catch (err: any) {

@@ -14,38 +14,54 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 export const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, closeAuthModal, login, signup, continueAsGuest } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, login, signup, continueAsGuest, isLoadingAuth } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   if (!isAuthModalOpen) return null;
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email.trim()) {
-      setError('Please provide an email address.');
+    if (!email.trim() || !password.trim()) {
+      setError('Please provide both email and password.');
       return;
     }
-    // Realistic prototype authentication with proper profile model
-    login(email.trim(), name.trim() || undefined);
+    try {
+      await login(email.trim(), password.trim());
+    } catch (err: any) {
+      setError(err.message || 'Invalid email or password.');
+    }
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email.trim() || !name.trim()) {
-      setError('Please provide both your name and email.');
+    if (!email.trim() || !name.trim() || !password.trim()) {
+      setError('Please provide your name, email, and password.');
       return;
     }
-    signup(name.trim(), email.trim());
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+    try {
+      await signup(name.trim(), email.trim(), password.trim());
+    } catch (err: any) {
+      setError(err.message || 'Registration failed.');
+    }
   };
 
-  const handleQuickDemoLogin = (patronName: string, patronEmail: string) => {
-    login(patronEmail, patronName);
+  const handleQuickDemoLogin = async (patronName: string, patronEmail: string) => {
+    try {
+      await login(patronEmail, 'vintage1926');
+    } catch (err: any) {
+      setError(err.message || 'Demo login failed.');
+    }
   };
 
   return (
@@ -169,13 +185,23 @@ export const AuthModal: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-mono uppercase tracking-wider text-espresso-700 font-bold block">
-                Password
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-mono uppercase tracking-wider text-espresso-700 font-bold block">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-[10px] text-vintageGold-700 hover:text-espresso-950 font-serif"
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
               <div className="relative">
                 <Lock className="w-4 h-4 text-espresso-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
@@ -186,10 +212,20 @@ export const AuthModal: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 px-4 rounded-xl bg-espresso-950 hover:bg-espresso-900 text-vintageGold-300 font-serif font-bold text-xs uppercase tracking-wider border border-vintageGold-500 shadow-vintage flex items-center justify-center gap-2 transition-all active:scale-95"
+              disabled={isLoadingAuth}
+              className="w-full py-3 px-4 rounded-xl bg-espresso-950 hover:bg-espresso-900 text-vintageGold-300 font-serif font-bold text-xs uppercase tracking-wider border border-vintageGold-500 shadow-vintage flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
             >
-              <span>{mode === 'signin' ? 'Sign In to AVES' : 'Complete Registration'}</span>
-              <ArrowRight className="w-4 h-4" />
+              {isLoadingAuth ? (
+                <>
+                  <span className="w-3.5 h-3.5 border-2 border-vintageGold-300 border-t-transparent rounded-full animate-spin" />
+                  <span>Verifying Ledger...</span>
+                </>
+              ) : (
+                <>
+                  <span>{mode === 'signin' ? 'Sign In to AVES' : 'Complete Registration'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 
@@ -222,7 +258,7 @@ export const AuthModal: React.FC = () => {
 
               <button
                 type="button"
-                onClick={continueAsGuest}
+                onClick={() => continueAsGuest()}
                 className="p-2.5 rounded-xl bg-cream-100 hover:bg-cream-200 border border-vintageGold-500/30 text-left flex items-center gap-2.5 transition-colors group"
               >
                 <div className="w-8 h-8 rounded-full bg-espresso-950 text-vintageGold-300 flex items-center justify-center font-serif text-xs font-bold shrink-0">

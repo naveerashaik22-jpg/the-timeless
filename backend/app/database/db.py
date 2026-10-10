@@ -186,11 +186,35 @@ class Database:
 
     def save_order(self, order_dict: Dict[str, Any]):
         self._orders[order_dict["order_id"]] = order_dict
+        from .sqlite_db import sqlite_db
+        sqlite_db.save_order(order_dict)
 
     def get_order(self, order_id: str) -> Optional[Dict[str, Any]]:
+        try:
+            from .sqlite_db import sqlite_db
+            order = sqlite_db.get_order(order_id)
+            if order:
+                return order
+        except Exception as e:
+            print("SQLite get_order error:", e)
         return self._orders.get(order_id)
 
+    def get_orders_by_user(self, user_id: str) -> List[Dict[str, Any]]:
+        try:
+            from .sqlite_db import sqlite_db
+            return sqlite_db.get_orders_by_user(user_id)
+        except Exception as e:
+            print("SQLite get_orders_by_user error:", e)
+            return [o for o in self._orders.values() if o.get("user_id") == user_id]
+
     def get_all_orders(self) -> List[Dict[str, Any]]:
+        try:
+            from .sqlite_db import sqlite_db
+            orders = sqlite_db.get_all_orders()
+            if orders:
+                return orders
+        except Exception as e:
+            print("SQLite get_all_orders error:", e)
         return list(self._orders.values())
 
     def get_user_memories(self) -> Dict[str, Any]:

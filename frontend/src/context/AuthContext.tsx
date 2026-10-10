@@ -1,5 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { UserProfile, UserPreferences, PastOrder, UserDiscovery, AvesMemoryInsight } from '../types';
+import {
+  loginApi,
+  registerApi,
+  guestSessionApi,
+  fetchCurrentUserApi,
+  updatePreferencesApi,
+  toggleFavoriteApi,
+  deleteMemoryApi,
+  fetchMyOrders
+} from '../services/api';
 
 interface AuthContextType {
   currentUser: UserProfile | null;
@@ -7,108 +17,32 @@ interface AuthContextType {
   isProfileOpen: boolean;
   isAuthModalOpen: boolean;
   welcomeModalUser: string | null;
+  authError: string | null;
+  isLoadingAuth: boolean;
   openProfile: () => void;
   closeProfile: () => void;
   openAuthModal: () => void;
   closeAuthModal: () => void;
   dismissWelcomeModal: () => void;
-  login: (email: string, name?: string) => void;
-  signup: (name: string, email: string) => void;
-  continueAsGuest: () => void;
+  login: (email: string, password?: string) => Promise<void>;
+  signup: (name: string, email: string, password?: string) => Promise<void>;
+  continueAsGuest: (guestName?: string) => Promise<void>;
   logout: () => void;
-  updatePreferences: (preferences: Partial<UserPreferences>) => void;
-  removeMemory: (memoryId: string) => void;
+  updatePreferences: (preferences: Partial<UserPreferences>) => Promise<void>;
+  removeMemory: (memoryId: string) => Promise<void>;
   togglePausePersonalization: () => void;
-  toggleFavorite: (itemId: string) => void;
+  toggleFavorite: (itemId: string) => Promise<void>;
+  refreshOrders: () => Promise<void>;
 }
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   favoriteFlavors: ['Bourbon Vanilla', 'Ceylon Cinnamon', 'Dark Cacao', 'Cardamom'],
-  dietaryPreferences: ['Vegetarian', 'Plant-Based Milk Option'],
+  dietaryPreferences: ['Vegetarian'],
   favoriteCategories: ['HOT BEVERAGES', 'DESSERTS'],
   sweetnessPreference: 'Mildly Sweet (Level 2/5)',
   spicePreference: 'Gentle Aromatic Spice',
   roastPreference: 'Medium-Dark Single Origin Arabica'
 };
-
-const DEFAULT_ORDERS: PastOrder[] = [
-  {
-    id: 'ord-1029',
-    item: "Shakespeare's Vanilla Arabica",
-    category: 'HOT BEVERAGES',
-    date: 'Yesterday, 5:40 PM',
-    price: 220,
-    cafe: 'The Veranda • Table 08',
-    status: 'Served',
-    image: 'https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=400&q=80'
-  },
-  {
-    id: 'ord-0982',
-    item: 'The Renaissance Waffle',
-    category: 'DESSERTS',
-    date: '3 Oct 2026, 4:15 PM',
-    price: 260,
-    cafe: 'The Tranquil Nook • Table 04',
-    status: 'Completed',
-    image: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=400&q=80'
-  },
-  {
-    id: 'ord-0891',
-    item: 'Heritage Samovar Chai',
-    category: 'HOT BEVERAGES',
-    date: '28 Sep 2026, 6:00 PM',
-    price: 160,
-    cafe: 'Ink & Ember • Armchair 03',
-    status: 'Completed',
-    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80'
-  }
-];
-
-const DEFAULT_DISCOVERIES: UserDiscovery[] = [
-  {
-    id: 'disc-01',
-    title: 'The Gatsby Botanical Cooler',
-    category: 'COLD BEVERAGES',
-    date: 'Discovered during Afternoon Reset',
-    image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=400&q=80',
-    memoryNote: 'Matched for celebratory effervescence & wild blackberry notes.'
-  },
-  {
-    id: 'disc-02',
-    title: 'Orange Blossom Shortbread',
-    category: 'DESSERTS',
-    date: 'Discovered during Book Session',
-    image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=400&q=80',
-    memoryNote: 'Selected to pair with cardamom samovar chai without overpowering it.'
-  }
-];
-
-const DEFAULT_MEMORIES: AvesMemoryInsight[] = [
-  {
-    id: 'mem-01',
-    statement: 'You usually enjoy mildly sweet drinks.',
-    category: 'Taste Pattern',
-    active: true
-  },
-  {
-    id: 'mem-02',
-    statement: 'You often choose comforting classics.',
-    category: 'Sensory Rhythm',
-    active: true
-  },
-  {
-    id: 'mem-03',
-    statement: "You've recently been exploring chai.",
-    category: 'Exploration Thread',
-    active: true
-  },
-  {
-    id: 'mem-04',
-    statement: 'You prefer oat microfoam over dairy during evening visits.',
-    category: 'Barista Formulation',
-    active: true
-  }
-];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -116,11 +50,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
     try {
       const saved = localStorage.getItem('aves_user_profile');
-      if (saved) {
-        return JSON.parse(saved);
-      }
+      if (saved) return JSON.parse(saved);
     } catch (e) {
-      console.error('Failed to parse saved user profile', e);
+      console.error('Failed to parse cached user profile', e);
     }
     return null;
   });
@@ -128,68 +60,223 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [welcomeModalUser, setWelcomeModalUser] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(false);
 
-  // Sync to localStorage
+  // Helper to map backend orders to PastOrder interface
+  const mapBackendOrders = (orders: any[]): PastOrder[] => {
+    const list: PastOrder[] = [];
+    for (const ord of orders) {
+      for (const item of (ord.items || [])) {
+        list.push({
+          id: `${ord.order_id}-${item.item_id}`,
+          item: item.name,
+          category: item.category || 'HOT BEVERAGES',
+          date: ord.created_at,
+          price: item.price,
+          cafe: ord.table_or_zone || 'The Timeless Main Lounge',
+          status: 'Completed',
+          image: item.image || 'https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=400&q=80'
+        });
+      }
+    }
+    return list;
+  };
+
+  // Synchronize orders for the current user from real backend
+  const refreshOrders = useCallback(async () => {
+    if (!currentUser?.id) return;
+    try {
+      const orders = await fetchMyOrders(currentUser.id);
+      const mapped = mapBackendOrders(orders);
+      setCurrentUser((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          previousOrders: mapped
+        };
+      });
+    } catch (e) {
+      console.warn('Could not refresh orders from backend:', e);
+    }
+  }, [currentUser?.id]);
+
+  // Load real orders whenever currentUser is set
+  useEffect(() => {
+    if (currentUser?.id) {
+      refreshOrders();
+    }
+  }, [currentUser?.id, refreshOrders]);
+
+  // Sync token and profile to localStorage
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem('aves_user_profile', JSON.stringify(currentUser));
+      if (currentUser.token) {
+        localStorage.setItem('aves_auth_token', currentUser.token);
+      }
     } else {
       localStorage.removeItem('aves_user_profile');
+      localStorage.removeItem('aves_auth_token');
     }
   }, [currentUser]);
 
-  const login = (email: string, name?: string) => {
-    const displayName = name?.trim() || (email.toLowerCase().includes('naveera') ? 'Naveera' : email.split('@')[0] || 'Patron');
-    const profile: UserProfile = {
-      id: `usr-${Date.now().toString().slice(-6)}`,
-      name: displayName,
-      email: email.trim(),
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-      memberSince: 'Autumn 2024 • Table Regular',
-      isGuest: false,
-      preferences: DEFAULT_PREFERENCES,
-      favorites: ['item-02', 'item-01', 'item-03'],
-      previousOrders: DEFAULT_ORDERS,
-      discoveries: DEFAULT_DISCOVERIES,
-      memories: DEFAULT_MEMORIES,
-      personalizationPaused: false
-    };
+  // Verify stored session on mount
+  useEffect(() => {
+    const token = localStorage.getItem('aves_auth_token');
+    if (token && !currentUser) {
+      fetchCurrentUserApi(token)
+        .then(async (user) => {
+          const orders = await fetchMyOrders(user.id).catch(() => []);
+          const profile: UserProfile = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar,
+            memberSince: user.member_since,
+            isGuest: user.is_guest,
+            preferences: { ...DEFAULT_PREFERENCES, ...(user.preferences || {}) },
+            favorites: user.favorites || [],
+            previousOrders: mapBackendOrders(orders),
+            discoveries: [],
+            memories: (user.memories || []).map((m: any) => ({
+              id: m.id,
+              statement: m.statement,
+              category: m.category,
+              active: Boolean(m.active)
+            })),
+            personalizationPaused: false,
+            token: user.token || token
+          };
+          setCurrentUser(profile);
+        })
+        .catch(() => {
+          localStorage.removeItem('aves_auth_token');
+          localStorage.removeItem('aves_user_profile');
+        });
+    }
+  }, []);
 
-    setCurrentUser(profile);
-    setIsAuthModalOpen(false);
-    setWelcomeModalUser(displayName);
+  const login = async (email: string, password?: string) => {
+    setAuthError(null);
+    setIsLoadingAuth(true);
+    try {
+      const rawPassword = password || 'vintage1926'; // Fallback to demo credentials if none provided
+      const res = await loginApi(email, rawPassword);
+      const orders = await fetchMyOrders(res.id).catch(() => []);
+
+      const profile: UserProfile = {
+        id: res.id,
+        name: res.name,
+        email: res.email,
+        avatar: res.avatar,
+        memberSince: res.member_since,
+        isGuest: res.is_guest,
+        preferences: { ...DEFAULT_PREFERENCES, ...(res.preferences || {}) },
+        favorites: res.favorites || [],
+        previousOrders: mapBackendOrders(orders),
+        discoveries: [],
+        memories: (res.memories || []).map((m: any) => ({
+          id: m.id,
+          statement: m.statement,
+          category: m.category,
+          active: Boolean(m.active)
+        })),
+        personalizationPaused: false,
+        token: res.token
+      };
+
+      setCurrentUser(profile);
+      setIsAuthModalOpen(false);
+      setWelcomeModalUser(profile.name);
+    } catch (err: any) {
+      setAuthError(err.message || 'Authentication failed. Please verify your credentials.');
+      throw err;
+    } finally {
+      setIsLoadingAuth(false);
+    }
   };
 
-  const signup = (name: string, email: string) => {
-    login(email, name);
+  const signup = async (name: string, email: string, password?: string) => {
+    setAuthError(null);
+    setIsLoadingAuth(true);
+    try {
+      const rawPassword = password || 'vintage1926';
+      const res = await registerApi(name, email, rawPassword);
+
+      const profile: UserProfile = {
+        id: res.id,
+        name: res.name,
+        email: res.email,
+        avatar: res.avatar,
+        memberSince: res.member_since,
+        isGuest: false,
+        preferences: { ...DEFAULT_PREFERENCES, ...(res.preferences || {}) },
+        favorites: [],
+        previousOrders: [],
+        discoveries: [],
+        memories: [],
+        personalizationPaused: false,
+        token: res.token
+      };
+
+      setCurrentUser(profile);
+      setIsAuthModalOpen(false);
+      setWelcomeModalUser(profile.name);
+    } catch (err: any) {
+      setAuthError(err.message || 'Registration failed. Please check your details.');
+      throw err;
+    } finally {
+      setIsLoadingAuth(false);
+    }
   };
 
-  const continueAsGuest = () => {
-    const guestProfile: UserProfile = {
-      id: `gst-${Date.now().toString().slice(-4)}`,
-      name: 'Guest Diner',
-      email: 'guest@aves.tabletop',
-      avatar: undefined,
-      memberSince: 'Table 08 Veranda Session',
-      isGuest: true,
-      preferences: DEFAULT_PREFERENCES,
-      favorites: ['item-02'],
-      previousOrders: [],
-      discoveries: [],
-      memories: [
-        {
-          id: 'mem-guest-01',
-          statement: 'Seated at Table 08 Veranda with guest session access.',
-          category: 'Current Session',
-          active: true
-        }
-      ],
-      personalizationPaused: false
-    };
+  const continueAsGuest = async (guestName?: string) => {
+    setAuthError(null);
+    setIsLoadingAuth(true);
+    try {
+      const res = await guestSessionApi(guestName);
+      const profile: UserProfile = {
+        id: res.id,
+        name: res.name,
+        email: res.email,
+        avatar: undefined,
+        memberSince: 'Tabletop Guest Session',
+        isGuest: true,
+        preferences: DEFAULT_PREFERENCES,
+        favorites: [],
+        previousOrders: [],
+        discoveries: [],
+        memories: [],
+        personalizationPaused: false,
+        token: res.token
+      };
 
-    setCurrentUser(guestProfile);
-    setIsAuthModalOpen(false);
-    setWelcomeModalUser('Guest Diner');
+      setCurrentUser(profile);
+      setIsAuthModalOpen(false);
+      setWelcomeModalUser(profile.name);
+    } catch (err: any) {
+      // Fallback local guest profile if offline
+      const guestProfile: UserProfile = {
+        id: `gst-${Date.now().toString().slice(-4)}`,
+        name: guestName?.trim() || 'Guest Traveler',
+        email: 'guest@aves.tabletop',
+        avatar: undefined,
+        memberSince: 'Tabletop Guest Session',
+        isGuest: true,
+        preferences: DEFAULT_PREFERENCES,
+        favorites: [],
+        previousOrders: [],
+        discoveries: [],
+        memories: [],
+        personalizationPaused: false
+      };
+      setCurrentUser(guestProfile);
+      setIsAuthModalOpen(false);
+      setWelcomeModalUser(guestProfile.name);
+    } finally {
+      setIsLoadingAuth(false);
+    }
   };
 
   const logout = () => {
@@ -197,25 +284,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsProfileOpen(false);
     setIsAuthModalOpen(false);
     setWelcomeModalUser(null);
+    setAuthError(null);
+    localStorage.removeItem('aves_user_profile');
+    localStorage.removeItem('aves_auth_token');
   };
 
-  const updatePreferences = (updated: Partial<UserPreferences>) => {
+  const updatePreferences = async (updated: Partial<UserPreferences>) => {
     if (!currentUser) return;
-    setCurrentUser({
-      ...currentUser,
-      preferences: {
-        ...currentUser.preferences,
-        ...updated
+    const newPrefs = { ...currentUser.preferences, ...updated };
+    setCurrentUser({ ...currentUser, preferences: newPrefs });
+
+    if (currentUser.token) {
+      try {
+        await updatePreferencesApi(newPrefs, currentUser.token);
+      } catch (e) {
+        console.warn('Failed to sync preferences to backend:', e);
       }
-    });
+    }
   };
 
-  const removeMemory = (memoryId: string) => {
+  const removeMemory = async (memoryId: string) => {
     if (!currentUser) return;
     setCurrentUser({
       ...currentUser,
       memories: currentUser.memories.filter((m) => m.id !== memoryId)
     });
+
+    if (currentUser.token) {
+      try {
+        await deleteMemoryApi(memoryId, currentUser.token);
+      } catch (e) {
+        console.warn('Failed to delete memory on backend:', e);
+      }
+    }
   };
 
   const togglePausePersonalization = () => {
@@ -226,15 +327,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const toggleFavorite = (itemId: string) => {
+  const toggleFavorite = async (itemId: string) => {
     if (!currentUser) return;
     const exists = currentUser.favorites.includes(itemId);
+    const updatedFavorites = exists
+      ? currentUser.favorites.filter((id) => id !== itemId)
+      : [...currentUser.favorites, itemId];
+
     setCurrentUser({
       ...currentUser,
-      favorites: exists
-        ? currentUser.favorites.filter((id) => id !== itemId)
-        : [...currentUser.favorites, itemId]
+      favorites: updatedFavorites
     });
+
+    if (currentUser.token) {
+      try {
+        await toggleFavoriteApi(itemId, currentUser.token);
+      } catch (e) {
+        console.warn('Failed to sync favorite on backend:', e);
+      }
+    }
   };
 
   return (
@@ -245,10 +356,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isProfileOpen,
         isAuthModalOpen,
         welcomeModalUser,
+        authError,
+        isLoadingAuth,
         openProfile: () => setIsProfileOpen(true),
         closeProfile: () => setIsProfileOpen(false),
         openAuthModal: () => setIsAuthModalOpen(true),
-        closeAuthModal: () => setIsAuthModalOpen(false),
+        closeAuthModal: () => {
+          setAuthError(null);
+          setIsAuthModalOpen(false);
+        },
         dismissWelcomeModal: () => setWelcomeModalUser(null),
         login,
         signup,
@@ -257,7 +373,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatePreferences,
         removeMemory,
         togglePausePersonalization,
-        toggleFavorite
+        toggleFavorite,
+        refreshOrders
       }}
     >
       {children}

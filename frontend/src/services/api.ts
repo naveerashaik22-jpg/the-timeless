@@ -27,8 +27,12 @@ export interface RecommendationResponse {
   zone_recommendation?: ZoneRecommendation;
   summary_message: string;
 }
-
-const API_BASE = ((import.meta as any).env?.VITE_API_BASE_URL as string) || '/api';
+// Normalize API_BASE for reliable local and production deployment
+const rawBase = ((import.meta as any).env?.VITE_API_BASE_URL as string | undefined)?.trim();
+const cleanBase = rawBase ? rawBase.replace(/\/+$/, '') : '';
+export const API_BASE = cleanBase
+  ? (cleanBase.endsWith('/api') ? cleanBase : `${cleanBase}/api`)
+  : '/api';
 
 // 1. Menu & Cafe
 export async function fetchMenu(params?: { category?: string; dietary?: string; search?: string }): Promise<{ items: MenuItem[]; total: number; categories: string[] }> {
@@ -75,19 +79,49 @@ export async function sendChatMessage(data: {
 
 export async function placeOrder(orderData: {
   items: CartItem[];
+  user_id?: string;
   customer_name?: string;
   table_or_zone?: string;
   special_instructions?: string;
   applied_mood?: string;
-}): Promise<OrderResponse> {
+}, token?: string): Promise<OrderResponse> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const authToken = token || localStorage.getItem('aves_auth_token');
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`;
+  }
+
   const res = await fetch(`${API_BASE}/orders`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(orderData),
   });
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: 'Failed to create order' }));
-    throw new Error(err.detail || 'Failed to place order');
+    let errorDetail = 'Failed to place order';
+    try {
+      const err = await res.json();
+      errorDetail = err.detail || errorDetail;
+    } catch {
+      errorDetail = `Server returned status ${res.status}: ${res.statusText || 'Unable to place order'}`;
+    }
+    throw new Error(errorDetail);
+  }
+  return res.json();
+}
+
+export async function fetchMyOrders(userId?: string, token?: string): Promise<OrderResponse[]> {
+  const headers: Record<string, string> = {};
+  const authToken = token || localStorage.getItem('aves_auth_token');
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`;
+  }
+
+  const query = userId ? `?user_id=${encodeURIComponent(userId)}` : '';
+  const res = await fetch(`${API_BASE}/orders/my-orders${query}`, { headers });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Failed to retrieve order history' }));
+    throw new Error(err.detail || 'Failed to retrieve order history');
   }
   return res.json();
 }
@@ -279,5 +313,103 @@ export async function saveMemoryItem(category: string, item: any) {
     body: JSON.stringify(item),
   });
   if (!res.ok) throw new Error('Failed to save memory');
+  return res.json();
+}
+
+// 9. Real Patron Authentication & Identity
+export async function loginApi(email: string, password: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Invalid email or password.' }));
+    throw new Error(err.detail || 'Failed to sign in.');
+  }
+  return res.json();
+}
+
+export async function registerApi(name: string, email: string, password: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Failed to create patron account.' }));
+    throw new Error(err.detail || 'Failed to register account.');
+  }
+  return res.json();
+}
+
+export async function guestSessionApi(guestName?: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/guest`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ guest_name: guestName || 'Guest Traveler' }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Failed to establish guest session.' }));
+    throw new Error(err.detail || 'Failed to initialize guest preview.');
+  }
+  return res.json();
+}
+
+export async function fetchCurrentUserApi(token: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Session expired');
+  return res.json();
+}
+
+export async function updatePreferencesApi(preferences: any, token: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/preferences`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ preferences }),
+  });
+  if (!res.ok) throw new Error('Failed to update preferences');
+  return res.json();
+}
+
+export async function toggleFavoriteApi(itemId: string, token: string): Promise<{ item_id: string; is_favorited: boolean }> {
+  const res = await fetch(`${API_BASE}/auth/favorites/toggle`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ item_id: itemId }),
+  });
+  if (!res.ok) throw new Error('Failed to toggle favorite');
+  return res.json();
+}
+
+export async function addMemoryApi(statement: string, category: string, token: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/memories`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ statement, category }),
+  });
+  if (!res.ok) throw new Error('Failed to record memory');
+  return res.json();
+}
+
+export async function deleteMemoryApi(memoryId: string, token: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/memories/${encodeURIComponent(memoryId)}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error('Failed to delete memory');
   return res.json();
 }

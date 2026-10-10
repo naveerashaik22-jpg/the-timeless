@@ -16,7 +16,8 @@ from .api import (
     echo,
     tranquil,
     tiny_tales,
-    user_memories
+    user_memories,
+    auth
 )
 
 load_dotenv()
@@ -27,18 +28,32 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# Allow CORS for frontend dev server
+# Configurable CORS for dev and production deployment
+cors_origins_env = os.getenv("CORS_ORIGINS", "")
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000"
+]
+if cors_origins_env:
+    for o in cors_origins_env.split(","):
+        cleaned = o.strip()
+        if cleaned and cleaned not in allowed_origins:
+            allowed_origins.append(cleaned)
+
+# Origin regex to allow localhost + preview/production deployments (Vercel, Netlify, Render, Cloud Run)
+cors_regex = os.getenv(
+    "CORS_ORIGIN_REGEX",
+    r"https?://(localhost|127\.0\.0\.1|.*\.vercel\.app|.*\.netlify\.app|.*\.onrender\.com)(:\d+)?"
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000"
-    ],
-    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_origins=allowed_origins,
+    allow_origin_regex=cors_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,6 +73,7 @@ app.include_router(echo.router)
 app.include_router(tranquil.router)
 app.include_router(tiny_tales.router)
 app.include_router(user_memories.router)
+app.include_router(auth.router)
 
 @app.get("/api/health")
 async def health_check():

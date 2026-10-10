@@ -3,6 +3,7 @@ import { ShoppingBag, Check, Sparkles, Flame, Snowflake, Heart } from 'lucide-re
 import { MenuItem } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { handleImageError, getSafeImageUrl } from '../../utils/imageFallback';
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -50,10 +51,11 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
          ========================================================================= */}
       <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-espresso-950">
         <img
-          src={item.image}
+          src={getSafeImageUrl(item.image, item.category)}
           alt={item.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-95 group-hover:brightness-100"
           loading="lazy"
+          onError={(e) => handleImageError(e, getSafeImageUrl(null, item.category))}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-espresso-950/80 via-espresso-950/15 to-transparent pointer-events-none" />
 

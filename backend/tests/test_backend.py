@@ -121,3 +121,35 @@ def test_all_aves_divisions_loaded():
     assert len(db.get_photo_booth_templates()) >= 6
     assert len(db.get_postcards()) >= 4
     assert len(db.get_lanterns()) >= 2
+
+def test_authoritative_order_and_persistence():
+    # Attempt to tamper with price: item-01 official price is 260
+    tampered_req = OrderCreateRequest(
+        items=[
+            CartItem(item_id="item-01", name="Tampered Waffle", price=5, quantity=1, category="DESSERTS")
+        ],
+        user_id="usr-test-123",
+        customer_name="Julian Hayes",
+        table_or_zone="Veranda Table 08"
+    )
+    res = order_service.create_order(tampered_req)
+    # Server must correct price to 260
+    assert res.subtotal == 260
+    assert res.items[0].price == 260
+    assert res.total == 260 + int(round(260 * 0.05))
+    
+    # Retrieve order from persistent storage
+    fetched = order_service.get_order(res.order_id)
+    assert fetched is not None
+    assert fetched["subtotal"] == 260
+    assert fetched["user_id"] == "usr-test-123"
+
+    # User order history
+    user_orders = order_service.get_orders_for_user("usr-test-123")
+    assert any(o.order_id == res.order_id for o in user_orders)
+
+def test_token_generation_and_order_binding():
+    from app.api.auth import generate_token, verify_token
+    token = generate_token("usr-token-patron-99")
+    verified_id = verify_token(token)
+    assert verified_id == "usr-token-patron-99"

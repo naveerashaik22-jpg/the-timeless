@@ -49,6 +49,17 @@ export const AppContent: React.FC = () => {
     setCurrentView('landing');
   };
 
+  if (!isAuthenticated) {
+    return (
+      <AuthWelcomeView
+        onContinueAsGuest={continueAsGuest}
+        onAuthenticated={(profile: any) => {
+          login(profile.email, profile.password);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#FAF6EE] text-espresso-950 selection:bg-vintageGold-500 selection:text-espresso-950 font-sans">
       
